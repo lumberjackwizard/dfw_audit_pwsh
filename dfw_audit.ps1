@@ -10,6 +10,7 @@ $Cred = Get-Credential -Title 'NSX Manager Credentials' -Message 'Enter NSX User
 
 # Uri will get only securitypolices, groups, and services under infra
 
+$Uri = 'https://'+$nsxmgr+'/policy/api/v1/infra?type_filter=SecurityPolicy'
 function Get-NSXDFW($Uri){
 
 	# The below gathers all securitypolicies, groups, and services from global-infra, storing it in 
@@ -43,6 +44,9 @@ function Get-NSXDFW($Uri){
 				$filteredsecpol += $secpolicy
 	}
 
+	
+	<#
+	
 	# Gathering Groups
 
 	Write-Host "Gathering Groups..."
@@ -88,44 +92,13 @@ function Get-NSXDFW($Uri){
 			$filteredcontextprofiles += $contextprofile
 	}
 
-
-	Write-Host "Generating output file..."
-
-	$childgroups = @()
-	foreach ($group in $filteredgroups){
-		$childgroups += @{resource_type = "ChildGroup"; Group = $Group}
-	}
-
-	$childsecpols = @()
-	foreach ($secpol in $filteredsecpol){
-		$childsecpols += @{resource_type = "ChildSecurityPolicy"; SecurityPolicy = $secpol}
-	}
-
-	$childsvcs = @()
-	foreach ($svc in $filteredsvc){
-		$childsvcs += @{resource_type = "ChildService"; Service = $svc}
-	}
-
-	$childcontextprofiles = @()
-	foreach ($contextprofile in $filteredcontextprofiles){
-		$childcontextprofiles += @{resource_type = "ChildPolicyContextProfile"; PolicyContextProfile = $contextprofile}
-	}
-
-	$infrachildren = $childsecpols + $childgroups
-
-
-	$infra = @{resource_type = "Infra"; children = @(@{resource_type = "ChildDomain"; Domain = @{resource_type = "Domain"; id = "default"; children = $infrachildren}}) + $childsvcs + $childcontextprofiles }
-
-	return $infra
+#>
 }
 
-function New-NSXLocalInfra {
-	$infra | ConvertTo-Json -Depth 12 | Out-File -FilePath .\policy.json
-}
 
-function New-NSXGlobalInfra {
-	($infra | ConvertTo-Json -Depth 12).replace('global-infra','infra') | Out-File -FilePath .\global-policy.json
-}
+
+
+<#
 
 # Main Menu
 
@@ -171,3 +144,7 @@ do
      pause
 }
 until ($input -eq ‘q’)
+
+#>
+
+Get-NSXDFW($Uri)

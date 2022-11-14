@@ -147,4 +147,5 @@ until ($input -eq ‘q’)
 
 #>
 
-Get-NSXDFW($Uri)
+$infra = Get-NSXDFW($Uri)
+$infra

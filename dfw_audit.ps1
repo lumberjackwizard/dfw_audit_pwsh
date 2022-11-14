@@ -148,4 +148,4 @@ until ($input -eq ‘q’)
 #>
 
 $infra = Get-NSXDFW($Uri)
-Write-Output $infra
+Get-Type $infra

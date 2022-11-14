@@ -20,7 +20,7 @@ function Get-NSXDFW($Uri){
 
 	$rawpolicy = Invoke-RestMethod -Uri $Uri -SkipCertificateCheck -Authentication Basic -Credential $Cred 
 
-	$rawpolicy
+	$rawpolicy.Get-Type()
 	# Gathering security policies and rules
 	
 	Write-Host "Gathering DFW Security Policies and rules..."
@@ -149,4 +149,3 @@ until ($input -eq ‘q’)
 #>
 
 $infra = Get-NSXDFW($Uri)
-Get-Type $infra

@@ -20,6 +20,7 @@ function Get-NSXDFW($Uri){
 
 	$rawpolicy = Invoke-RestMethod -Uri $Uri -SkipCertificateCheck -Authentication Basic -Credential $Cred 
 
+	$rawpolicy
 	# Gathering security policies and rules
 	
 	Write-Host "Gathering DFW Security Policies and rules..."

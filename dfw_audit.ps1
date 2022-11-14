@@ -17,11 +17,11 @@ function Get-NSXDFW($Uri){
 	# the $rawpolicy variable 
 
 	Write-Host "Requesting data from target NSX Manager..."
-	$Uri
+	
 
 	$rawpolicy = Invoke-RestMethod -Uri $Uri -SkipCertificateCheck -Authentication Basic -Credential $Cred 
 
-	$rawpolicy.GetType()
+
 	# Gathering security policies and rules
 	
 	Write-Host "Gathering DFW Security Policies and rules..."
@@ -46,7 +46,7 @@ function Get-NSXDFW($Uri){
 				$filteredsecpol += $secpolicy
 	}
 
-	
+	return $filteredsecpol
 	<#
 	
 	# Gathering Groups

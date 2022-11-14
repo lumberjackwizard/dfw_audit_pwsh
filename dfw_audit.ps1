@@ -17,6 +17,7 @@ function Get-NSXDFW($Uri){
 	# the $rawpolicy variable 
 
 	Write-Host "Requesting data from target NSX Manager..."
+	$Uri
 
 	$rawpolicy = Invoke-RestMethod -Uri $Uri -SkipCertificateCheck -Authentication Basic -Credential $Cred 
 

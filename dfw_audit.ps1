@@ -4,13 +4,14 @@ $nsxmgr = '172.16.10.11'
 $nsxuser = 'admin'
 $nsxpasswd = ConvertTo-SecureString -String 'VMware1!VMware1!' -AsPlainText -Force
 $Cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $nsxuser, $nsxpasswd
+$Uri = 'https://'+$nsxmgr+'/policy/api/v1/infra?type_filter=SecurityPolicy'
 
 #$nsxmgr = Read-Host "Enter NSX Manager IP or FQDN"
 #$Cred = Get-Credential -Title 'NSX Manager Credentials' -Message 'Enter NSX Username and Password'
 
 # Uri will get only securitypolices, groups, and services under infra
 
-$Uri = 'https://'+$nsxmgr+'/policy/api/v1/infra?type_filter=SecurityPolicy'
+
 function Get-NSXDFW($Uri){
 
 	# The below gathers all securitypolicies, groups, and services from global-infra, storing it in 
@@ -27,27 +28,6 @@ function Get-NSXDFW($Uri){
 	Write-Host "Gathering DFW Security Policies and rules..."
 
 	$secpolicies = $rawpolicy.children.Domain.children.SecurityPolicy | Where-object {$_.id -And $_.id -ne 'Default'}
-
-<#
-	$filteredsecpol = @()
-
-
-	foreach ($secpolicy in $secpolicies | Where-object {$_._create_user -ne 'system' -And $_._system_owned -eq $False}){
-				$secpolicy = $secpolicy | Select-Object -ExcludeProperty path,relative_path,unique_id,realization_id,parent_path,marked_for_delete,overridden,internal_sequence_number,locked, lock_modified_time, is_default,_*,target_type
-		
-
-				$filteredrules = @()
-				foreach ($rule in $secpolicy.children | Where-object {$_.id}){
-						$rule = $rule | Select-Object -ExcludeProperty marked_for_delete,mark_for_override,_* 
-						$rule.Rule = $rule.Rule | Select-Object -ExcludeProperty marked_for_delete,path,relative_path,parent_path,unique_id,realization_id,overridden,rule_id,is_default,_*,children
-						$filteredrules += $rule
-				}
-			
-
-				$secpolicy.children = $filteredrules
-				$filteredsecpol += $secpolicy
-	}
-#>
 
 	return $secpolicies
 	<#
@@ -100,7 +80,9 @@ function Get-NSXDFW($Uri){
 #>
 }
 
-
+function Get-NSXDFWStats{
+	
+}
 
 
 <#

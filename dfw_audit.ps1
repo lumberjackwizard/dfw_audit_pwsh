@@ -30,54 +30,7 @@ function Get-NSXDFW($Uri){
 	$secpolicies = $rawpolicy.children.Domain.children.SecurityPolicy | Where-object {$_.id -And $_._create_user -ne 'system' -And $_._system_owned -eq $False}
 
 	return $secpolicies
-	<#
 	
-	# Gathering Groups
-
-	Write-Host "Gathering Groups..."
-
-	$allgroups = $rawpolicy.children.Domain.children.Group | Where-object {$_.id}
-	$filteredgroups = @()
-
-	foreach ($group in $allgroups | Where-object {$_._system_owned -eq $False -And $_._create_user -ne 'system'}){
-			$group = $group | Select-Object -ExcludeProperty reference,path,relative_path,parent_path,unique_id,realization_id,marked_for_delete,overridden,_*
-					
-			$filteredgroups += $group
-	}
-
-
-	# Gathering Services
-
-	Write-Host "Gathering Serivces..."
-
-	$allservices = $rawpolicy.children.Service | Where-object {$_.id}
-	$filteredsvc = @()
-
-	foreach ($svc in $allservices | Where-object {$_.is_default -ne $true}){
-				$svc = $svc | Select-Object -ExcludeProperty is_default,path,relative_path,parent_path,unique_id,realization_id,marked_for_delete,overridden,_*
-				$svc_entries = @()
-				foreach ($svc_entry in $svc.service_entries | Where-object {$_.id}){
-						$svc_entry = $svc_entry | Select-Object resource_type,children
-						$svc_entries += $svc_entry 
-				}
-				$svc.service_entries = $svc_entries
-
-				$filteredsvc += $svc
-	}
-
-	# Gathering Context Profiles
-
-	Write-Host "Gathering Context Profiles..."
-
-	$allcontextprofiles = $rawpolicy.children.PolicyContextProfile | Where-object {$_.id}
-	$filteredcontextprofiles = @()
-
-	foreach ($contextprofile in $allcontextprofiles | Where-object {$_._create_user -ne 'system' -And $_._system_owned -ne $true}){
-			$contextprofile = $contextprofile | Select-Object -ExcludeProperty path,relative_path,parent_path,unique_id,realization_id,marked_for_delete,overridden,_*
-			$filteredcontextprofiles += $contextprofile
-	}
-
-#>
 }
 
 function Get-NSXDFWStats($secpolicies){
@@ -88,6 +41,13 @@ function Get-NSXDFWStats($secpolicies){
 		$allpolstats += $polstats
 	}
 	return $allpolstats
+}
+
+function Get-NSXDFWNoHitRules($allpolstats){
+	$zerohitrules = @()
+	foreach ($rulestat in $allpolstats | Where-object $_.hit_count -eq '0'){
+		$zerohitrules += $rulestat
+	}
 }
 
 
@@ -142,4 +102,6 @@ until ($input -eq ‘q’)
 
 $secpolicies = Get-NSXDFW($Uri)
 $allstats = Get-NSXDFWStats($secpolicies)
-$allstats.results
+$nohitrules = Get-NSXDFWNoHitRules($allstats)
+$nohitrules
+

@@ -141,5 +141,6 @@ until ($input -eq ‘q’)
 #>
 
 $secpolicies = Get-NSXDFW($Uri)
+$secpolicies.id
 $allstats = Get-NSXDFWStats($secpolicies)
 $allstats

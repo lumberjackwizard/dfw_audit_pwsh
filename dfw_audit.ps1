@@ -27,7 +27,7 @@ function Get-NSXDFW($Uri){
 	
 	Write-Host "Gathering DFW Security Policies and rules..."
 
-	$secpolicies = $rawpolicy.children.Domain.children.SecurityPolicy | Where-object {$_.id -And $_.id -ne 'Default'}
+	$secpolicies = $rawpolicy.children.Domain.children.SecurityPolicy | Where-object {$_.id -And ($_.id -ne 'Default' -Or $_.id -ne 'default')}
 
 	return $secpolicies
 	<#

@@ -80,8 +80,14 @@ function Get-NSXDFW($Uri){
 #>
 }
 
-function Get-NSXDFWStats{
-	
+function Get-NSXDFWStats($secpolicies){
+	$allpolstats = @()
+	foreach ($secpol in $secpolicies){
+		$api_policy_url = 'https://'+$nsxmgr+'/policy/api/v1/infra/domains/default/security-policies/'+$secpol.id+'/statistics'
+		$polstats = Invoke-RestMethod -Uri $api_policy_url -SkipCertificateCheck -Authentication Basic -Credential $Cred 
+		$allpolstats += $polstats
+	}
+	return $allpolstats
 }
 
 
@@ -134,5 +140,6 @@ until ($input -eq ‘q’)
 
 #>
 
-$infra = Get-NSXDFW($Uri)
-$infra
+$secpolicies = Get-NSXDFW($Uri)
+$allstats = Get-NSXDFWStats($secpolicies)
+$allstats

@@ -9,13 +9,14 @@ $Uri = 'https://'+$nsxmgr+'/policy/api/v1/infra?type_filter=SecurityPolicy'
 #$nsxmgr = Read-Host "Enter NSX Manager IP or FQDN"
 #$Cred = Get-Credential -Title 'NSX Manager Credentials' -Message 'Enter NSX Username and Password'
 
-# Uri will get only securitypolices, groups, and services under infra
+
+# All fuctions beginning with 'Get-NSXDFW' will run at script initiation. All other functions will be
+# called via menu selection. 
 
 
 function Get-NSXDFW($Uri){
 
-	# The below gathers all securitypolicies, groups, and services from global-infra, storing it in 
-	# the $rawpolicy variable 
+	# The below gathers all securitypolicies in the $rawpolicy variable 
 
 	Write-Host "Requesting data from target NSX Manager..."
 	
@@ -51,16 +52,23 @@ function Get-NSXDFWStats($secpolicies){
 	return $allpolstats
 }
 
-function Get-NSXDFWNoHitRules($allpolstats){
+function Get-NSXDFWNoHitRules($allpolstats, $allrules){
 	$zerohitrules = @()
 	foreach ($polstat in $allpolstats){
 		$polrulestat = $polstat.results.statistics.results
 		foreach ($rulestat in $polrulestat | Where-object {$_.hit_count -eq '0'}){
 			$zerohitrules += $rulestat
+			$rulestatid = $rulestat.internal_rule_id
+			foreach ($rule in $allrules | Where-object {$_.rule_id -match ($rulestat.internal_rule_id)}){
+				Write-Host "Rule"($rule.rule_id)($rule.display_name)"has zero hits"
+			}
+
 		}	
 	}
 	return $zerohitrules
 }
+
+
 
 
 <#
@@ -112,9 +120,9 @@ until ($input -eq ‘q’)
 
 #>
 
-$secpolicies, $secpolicyrules = Get-NSXDFW($Uri)
-$allstats = Get-NSXDFWStats($secpolicies)
-$nohitrules = Get-NSXDFWNoHitRules($allstats)
+$allsecpolicies, $allrules = Get-NSXDFW $Uri
+$allstats = Get-NSXDFWStats $allsecpolicies
+$nohitrules = Get-NSXDFWNoHitRules $allstats $allrules
 $nohitrules
 
 

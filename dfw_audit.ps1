@@ -53,19 +53,29 @@ function Get-NSXDFWStats($secpolicies){
 }
 
 function Get-NSXDFWNoHitRules($allpolstats, $allrules){
-	$zerohitrules = @()
+	$nohitrules = @()
 	foreach ($polstat in $allpolstats){
 		$polrulestat = $polstat.results.statistics.results
 		foreach ($rulestat in $polrulestat | Where-object {$_.hit_count -eq '0'}){
-			$zerohitrules += $rulestat
-			$rulestatid = $rulestat.internal_rule_id
-			foreach ($rule in $allrules | Where-object {$_.rule_id -match ($rulestat.internal_rule_id)}){
-				Write-Host "Rule"($rule.rule_id)($rule.display_name)"has zero hits"
-			}
-
+			$nohitrules += $rulestat
+		#	$rulestatid = $rulestat.internal_rule_id
+		#	foreach ($rule in $allrules | Where-object {$_.rule_id -match ($rulestat.internal_rule_id)}){
+		#		Write-Host "Rule"($rule.rule_id)($rule.display_name)"has zero hits"
+		#	}
 		}	
 	}
-	return $zerohitrules
+	return $nohitrules
+}
+
+
+#Menu called functions
+
+function Get-AllNoHitRules($nohitrules, $allrules){
+	foreach ($rulestat in $nohitrules){
+		foreach ($rule in $allrules | Where-object {$_.rule_id -match ($rulestat.internal_rule_id)}){
+			Write-Host "Rule"($rule.rule_id)($rule.display_name)"has zero hits"
+		}
+	}
 }
 
 

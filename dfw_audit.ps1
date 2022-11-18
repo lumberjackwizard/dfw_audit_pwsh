@@ -30,7 +30,7 @@ function Get-NSXDFW($Uri){
 	$secpolicies = $rawpolicy.children.Domain.children.SecurityPolicy | Where-object {$_.id -And $_._create_user -ne 'system' -And $_._system_owned -eq $False}
 	$allrules = @()
 	foreach ($secpolicy in $secpolicies){
-		$secpolrules = $secpolicy.children
+		$secpolrules = $secpolicy.children.Rule
 		foreach ($rule in $secpolrules){
 			$allrules += $rule
 		}

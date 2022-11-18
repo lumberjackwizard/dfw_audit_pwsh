@@ -28,8 +28,16 @@ function Get-NSXDFW($Uri){
 	Write-Host "Gathering DFW Security Policies and rules..."
 
 	$secpolicies = $rawpolicy.children.Domain.children.SecurityPolicy | Where-object {$_.id -And $_._create_user -ne 'system' -And $_._system_owned -eq $False}
+	$allrules = @()
+	foreach ($secpolicy in $secpolicies){
+		$secpolrules = $secpolicy.children
+		foreach ($rule in $secpolrules){
+			$allrules += $rule
+		}
+	}
 
-	return $secpolicies
+
+	return $secpolicies, $allrules
 	
 }
 
@@ -104,7 +112,7 @@ until ($input -eq ‘q’)
 
 #>
 
-$secpolicies = Get-NSXDFW($Uri)
+$secpolicies, $secpolicyrules = Get-NSXDFW($Uri)
 $allstats = Get-NSXDFWStats($secpolicies)
 $nohitrules = Get-NSXDFWNoHitRules($allstats)
 $nohitrules

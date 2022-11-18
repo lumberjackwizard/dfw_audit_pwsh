@@ -48,7 +48,6 @@ function Get-NSXDFWNoHitRules($allpolstats){
 	foreach ($polstat in $allpolstats){
 		$polrulestat = $polstat.results.statistics.results
 		foreach ($rulestat in $polrulestat | Where-object {$_.hit_count -eq '0'}){
-			$rulestat
 			$zerohitrules += $rulestat
 		}	
 	}

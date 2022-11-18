@@ -45,9 +45,14 @@ function Get-NSXDFWStats($secpolicies){
 
 function Get-NSXDFWNoHitRules($allpolstats){
 	$zerohitrules = @()
-	foreach ($rulestat in $allpolstats | Where-object $_.hit_count -eq '0'){
-		$zerohitrules += $rulestat
+	foreach ($polstat in $allpolstats){
+		$polrulestat = $polstat.results.statistics.results
+		foreach ($rulestat in $polrulestat | Where-object {$_.hit_count -eq '0'}){
+			$rulestat
+			$zerohitrules += $rulestat
+		}	
 	}
+	return $zerohitrules
 }
 
 
@@ -102,7 +107,6 @@ until ($input -eq ‘q’)
 
 $secpolicies = Get-NSXDFW($Uri)
 $allstats = Get-NSXDFWStats($secpolicies)
-$allstats
-#$nohitrules = Get-NSXDFWNoHitRules($allstats)
-#$nohitrules
+$nohitrules = Get-NSXDFWNoHitRules($allstats)
+
 

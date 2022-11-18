@@ -82,6 +82,13 @@ function Get-TopTenHitRules($allpolstats, $allrules){
 	}
 }
 
+function Get-TargetDate(){
+	[int]$input_days = Read-Host "Input number of days ago"
+	[int]$daysdelta = $input_days * 86400
+	[int]$currentdate = get-date -UFormat %s
+	$targetdate = ($currentdate - $daysdelta) * 1000
+	return $targetdate
+}
 
 <#
 

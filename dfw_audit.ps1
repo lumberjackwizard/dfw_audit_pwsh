@@ -58,10 +58,6 @@ function Get-NSXDFWNoHitRules($allpolstats, $allrules){
 		$polrulestat = $polstat.results.statistics.results
 		foreach ($rulestat in $polrulestat | Where-object {$_.hit_count -eq '0'}){
 			$nohitrules += $rulestat
-		#	$rulestatid = $rulestat.internal_rule_id
-		#	foreach ($rule in $allrules | Where-object {$_.rule_id -match ($rulestat.internal_rule_id)}){
-		#		Write-Host "Rule"($rule.rule_id)($rule.display_name)"has zero hits"
-		#	}
 		}	
 	}
 	return $nohitrules
@@ -73,12 +69,18 @@ function Get-NSXDFWNoHitRules($allpolstats, $allrules){
 function Get-AllNoHitRules($nohitrules, $allrules){
 	foreach ($rulestat in $nohitrules){
 		foreach ($rule in $allrules | Where-object {$_.rule_id -match ($rulestat.internal_rule_id)}){
-			Write-Host "Rule"($rule.rule_id)($rule.display_name)"has zero hits"
+			Write-Host "Rule ID"($rule.rule_id)($rule.display_name)"has zero hits"
 		}
 	}
 }
 
-
+function Get-TopTenHitRules($allpolstats, $allrules){
+	$sorthitrules = $allpolstats.results.statistics.results | Sort-Object -Property hit_count -Descending
+	$tenpercent = [math]::ceiling($sorthitrules.count * .1)
+	for ( $index = 0; $index -lt $tenpercent; $index++){
+		Write-Host "Rule ID"($sorthitrules[$index].internal_rule_id)"has"($sorthitrules[$index].hit_count)"hits"
+	}
+}
 
 
 <#
@@ -133,6 +135,6 @@ until ($input -eq ‘q’)
 $allsecpolicies, $allrules = Get-NSXDFW $Uri
 $allstats = Get-NSXDFWStats $allsecpolicies
 $nohitrules = Get-NSXDFWNoHitRules $allstats $allrules
-$nohitrules
+
 
 

@@ -108,5 +108,6 @@ until ($input -eq ‘q’)
 $secpolicies = Get-NSXDFW($Uri)
 $allstats = Get-NSXDFWStats($secpolicies)
 $nohitrules = Get-NSXDFWNoHitRules($allstats)
+$nohitrules
 
 

@@ -110,6 +110,13 @@ function Get-TopTenHitRules($allpolstats, $allrules){
 	}
 }
 
+function Get-BottomTenHitRules($allpolstats, $allrules){
+	$sorthitrules = $allpolstats.results.statistics.results | Sort-Object -Property hit_count
+	$tenpercent = [math]::ceiling($sorthitrules.count * .1)
+	for ( $index = 0; $index -lt $tenpercent; $index++){
+		Write-Host "Rule ID"($sorthitrules[$index].internal_rule_id)"has"($sorthitrules[$index].hit_count)"hits"
+	}
+}
 
 <#
 

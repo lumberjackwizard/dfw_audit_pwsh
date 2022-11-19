@@ -66,9 +66,31 @@ function Get-NSXDFWNoHitRules($allpolstats, $allrules){
 
 #Menu called functions
 
+function Get-TargetDate(){
+	[int]$input_days = Read-Host "Input number of days ago"
+	[int]$daysdelta = $input_days * 86400
+	[int]$currentdate = get-date -UFormat %s
+	$targetdate = ($currentdate - $daysdelta) * 1000
+	return $targetdate
+}
+
 function Get-AllNoHitRules($nohitrules, $allrules){
+	$sortnohitrules = @()
 	foreach ($rulestat in $nohitrules){
 		foreach ($rule in $allrules | Where-object {$_.rule_id -match ($rulestat.internal_rule_id)}){
+			$sortnohitrules += $rule
+		}
+	}	
+	$sortnohitrules = $sortnohitrules | Sort-Object -Property _create_time -Descending
+	foreach ($rule in $sortnohitrules){
+			[int]$rulecreatetime = $rule._create_time / 1000
+			Write-Host "Rule ID"($rule.rule_id)($rule.display_name)"has zero hits -- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
+		}
+}
+
+function Get-NoHitRulesOlderThan($nohitrules, $allrules, $targetdate){
+	foreach ($nohitrule in $nohitrules){
+		foreach ($rule in $allrules | Where-object {$_.rule_id -match ($nohitrule.internal_rule_id) -And $_._create_time -lt $targetdate}){
 			Write-Host "Rule ID"($rule.rule_id)($rule.display_name)"has zero hits"
 		}
 	}
@@ -82,21 +104,6 @@ function Get-TopTenHitRules($allpolstats, $allrules){
 	}
 }
 
-function Get-TargetDate(){
-	[int]$input_days = Read-Host "Input number of days ago"
-	[int]$daysdelta = $input_days * 86400
-	[int]$currentdate = get-date -UFormat %s
-	$targetdate = ($currentdate - $daysdelta) * 1000
-	return $targetdate
-}
-
-function Get-NoHitRulesOlderThan($nohitrules, $allrules, $targetdate){
-	foreach ($nohitrule in $nohitrules){
-		foreach ($rule in $allrules | Where-object {$_.rule_id -match ($nohitrule.internal_rule_id) -And $_._create_time -lt $targetdate}){
-			Write-Host "Rule ID"($rule.rule_id)($rule.display_name)"has zero hits"
-		}
-	}
-}
 
 <#
 
@@ -150,7 +157,7 @@ until ($input -eq ‘q’)
 $allsecpolicies, $allrules = Get-NSXDFW $Uri
 $allstats = Get-NSXDFWStats $allsecpolicies
 $nohitrules = Get-NSXDFWNoHitRules $allstats $allrules
-$targetdate = Get-TargetDate
+#$targetdate = Get-TargetDate
 
 
 

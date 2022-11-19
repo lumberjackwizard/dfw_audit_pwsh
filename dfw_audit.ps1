@@ -81,7 +81,7 @@ function Get-AllNoHitRules($nohitrules, $allrules){
 			$sortnohitrules += $rule
 		}
 	}	
-	$sortnohitrules = $sortnohitrules | Sort-Object -Property _create_time -Descending
+	$sortnohitrules = $sortnohitrules | Sort-Object -Property _create_time 
 	foreach ($rule in $sortnohitrules){
 			[int]$rulecreatetime = $rule._create_time / 1000
 			Write-Host "Rule ID"($rule.rule_id)($rule.display_name)"has zero hits -- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
@@ -89,10 +89,16 @@ function Get-AllNoHitRules($nohitrules, $allrules){
 }
 
 function Get-NoHitRulesOlderThan($nohitrules, $allrules, $targetdate){
+	$sortnohitrules = @()
 	foreach ($nohitrule in $nohitrules){
 		foreach ($rule in $allrules | Where-object {$_.rule_id -match ($nohitrule.internal_rule_id) -And $_._create_time -lt $targetdate}){
-			Write-Host "Rule ID"($rule.rule_id)($rule.display_name)"has zero hits"
-		}
+			$sortnohitrules += $rule
+		}	
+	}
+	$sortnohitrules = $sortnohitrules | Sort-Object -Property _create_time
+	foreach ($rule in $sortnohitrules){
+		[int]$rulecreatetime = $rule._create_time / 1000
+		Write-Host "Rule ID"($rule.rule_id)($rule.display_name)"has zero hits -- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
 	}
 }
 

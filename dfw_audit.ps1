@@ -90,6 +90,14 @@ function Get-TargetDate(){
 	return $targetdate
 }
 
+function Get-NoHitRulesOlderThan($nohitrules, $allrules, $targetdate){
+	foreach ($nohitrule in $nohitrules){
+		foreach ($rule in $allrules | Where-object {$_.rule_id -match ($nohitrule.internal_rule_id) -And $_._create_time -lt $targetdate}){
+			Write-Host "Rule ID"($rule.rule_id)($rule.display_name)"has zero hits"
+		}
+	}
+}
+
 <#
 
 # Main Menu
@@ -142,6 +150,7 @@ until ($input -eq ‘q’)
 $allsecpolicies, $allrules = Get-NSXDFW $Uri
 $allstats = Get-NSXDFWStats $allsecpolicies
 $nohitrules = Get-NSXDFWNoHitRules $allstats $allrules
+$targetdate = Get-TargetDate
 
 
 

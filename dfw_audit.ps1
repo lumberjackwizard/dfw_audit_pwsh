@@ -91,7 +91,7 @@ function Get-AllNoHitRules($nohitrules, $allrules){
 	$sortnohitrules = $sortnohitrules | Sort-Object -Property _create_time 
 	foreach ($rule in $sortnohitrules){
 			[int]$rulecreatetime = $rule._create_time / 1000
-			Write-Host "Rule ID"($rule.rule_id)($rule.display_name)"has zero hits -- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
+			Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)"has zero hits -- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
 		}
 }
 
@@ -105,7 +105,7 @@ function Get-NoHitRulesOlderThan($nohitrules, $allrules, $targetdate){
 	$sortnohitrules = $sortnohitrules | Sort-Object -Property _create_time
 	foreach ($rule in $sortnohitrules){
 		[int]$rulecreatetime = $rule._create_time / 1000
-		Write-Host "Rule ID"($rule.rule_id)($rule.display_name)"has zero hits -- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
+		Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)"has zero hits -- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
 	}
 }
 
@@ -114,7 +114,7 @@ function Get-TopTenHitRules($allpolstats, $allrules){
 	$tenpercent = [math]::ceiling($sorthitrules.count * .1)
 	for ( $index = 0; $index -lt $tenpercent; $index++){
 		foreach ($rule in $allrules | Where-object {$_.rule_id -match ($sorthitrules[$index].internal_rule_id)}){
-			Write-Host "Rule ID"($rule.rule_id)($rule.display_name)"has"($sorthitrules[$index].hit_count)"hits"
+			Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)"has"($sorthitrules[$index].hit_count)"hits"
 		}
 	}
 }
@@ -124,8 +124,14 @@ function Get-BottomTenHitRules($allpolstats, $allrules){
 	$tenpercent = [math]::ceiling($sorthitrules.count * .1)
 	for ( $index = 0; $index -lt $tenpercent; $index++){
 		foreach ($rule in $allrules | Where-object {$_.rule_id -match ($sorthitrules[$index].internal_rule_id)}){
-			Write-Host "Rule ID"($rule.rule_id)($rule.display_name)"has"($sorthitrules[$index].hit_count)"hits"
+			Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)"has"($sorthitrules[$index].hit_count)"hits"
 		}
+	}
+}
+
+function Get-RulesNoAppliedTo($allnoappliedtopolicyrules){
+	foreach ($rule in $allnoappliedtopolicyrules | Where-Object {$_.id -And $_.scope -eq "ANY"}){
+		Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)
 	}
 }
 <#

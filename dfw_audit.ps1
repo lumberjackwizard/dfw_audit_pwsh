@@ -30,7 +30,14 @@ function Get-NSXDFW($Uri){
 
 	$secpolicies = $rawpolicy.children.Domain.children.SecurityPolicy | Where-object {$_.id -And $_._create_user -ne 'system' -And $_._system_owned -eq $False}
 	$allrules = @()
+	$allnoappliedtopolicyrules = @()
+	$noappliedtopolicy = $()
 	foreach ($secpolicy in $secpolicies){
+		$noappliedtopolicy = $secpolicy | Where-Object {$_.scope -eq "ANY"}
+		$noappliedtopolicyrules = $noappliedtopolicy.children.Rule
+		foreach ($rule in $noappliedtopolicyrules | Where-Object {$_.id}){
+			$allnoappliedtopolicyrules += $rule
+		}
 		$secpolrules = $secpolicy.children.Rule
 		foreach ($rule in $secpolrules){
 			$allrules += $rule
@@ -38,7 +45,7 @@ function Get-NSXDFW($Uri){
 	}
 
 
-	return $secpolicies, $allrules
+	return $secpolicies, $allrules, $allnoappliedtopolicyrules
 	
 }
 
@@ -113,7 +120,7 @@ function Get-TopTenHitRules($allpolstats, $allrules){
 }
 
 function Get-BottomTenHitRules($allpolstats, $allrules){
-	$sorthitrules = $allpolstats.results.statistics.results | Sort-Object -Property hit_count
+	$sorthitrules = $allpolstats.results.statistics.results | Where-Object -Property hit_count -ne 0 | Sort-Object -Property hit_count
 	$tenpercent = [math]::ceiling($sorthitrules.count * .1)
 	for ( $index = 0; $index -lt $tenpercent; $index++){
 		foreach ($rule in $allrules | Where-object {$_.rule_id -match ($sorthitrules[$index].internal_rule_id)}){
@@ -170,7 +177,7 @@ until ($input -eq ‘q’)
 
 #>
 
-$allsecpolicies, $allrules = Get-NSXDFW $Uri
+$allsecpolicies, $allrules, $allnoappliedtopolicyrules = Get-NSXDFW $Uri
 $allstats = Get-NSXDFWStats $allsecpolicies
 $nohitrules = Get-NSXDFWNoHitRules $allstats $allrules
 #$targetdate = Get-TargetDate

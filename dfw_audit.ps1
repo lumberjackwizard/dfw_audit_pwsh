@@ -234,12 +234,12 @@ do
            } ‘4’ {
                 cls
                 ‘Top 10 percent least hit rules (excluding zero hit rules):’
-				Get-BottomTenHitRules $allpolstats $allrules
+				Get-BottomTenHitRules $allstats $allrules
 				'Done!'
             } ‘5’ {
                 cls
                 ‘Top 10 percent most hit rules:’
-				Get-TopTenHitRules $allpolstats $allrules
+				Get-TopTenHitRules $allstats $allrules
 				'Done!'
            } ‘b’ {
                 return

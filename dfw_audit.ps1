@@ -134,46 +134,161 @@ function Get-RulesNoAppliedTo($allnoappliedtopolicyrules){
 		Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)
 	}
 }
-<#
 
-# Main Menu
 
-function Show-Menu
+#  Menu Systems
+
+function Hit-Menu-Options
 {
      param (
-           [string]$Title = ‘NSX DFW Configuration backup/migration’
+           [string]$Title = ‘NSX DFW Rule Hit queries’
      )
      cls
      Write-Host “================ $Title ================”
      
-     Write-Host “1: Press ‘1’ for Local to Local NSX Manager DFW backup/migration.”
-     Write-Host “2: Press ‘2’ for Global (Federation) to Local NSX Manager DFW backup/migration .”
-     Write-Host “Q: Press ‘Q’ to quit.”
+     Write-Host “1: List all rules with no hits”
+     Write-Host “2: List all rules older than 'X' days with no hits”
+     Write-Host “3: List all rules newer than 'X' days with no hits”
+     Write-Host “4: List top ten percent least hit rules (excluding no hit rules)”
+     Write-Host “5: List top ten percent most hit rules”
+     Write-Host “B: Enter ‘B’ to go back to Main Menu"
 }
 
-# Main
+function Hit-Menu {
 
 do
 {
-     Show-Menu
+     Hit-Menu-Options
      $input = Read-Host “Please make a selection”
      switch ($input)
      {
            ‘1’ {
                 cls
-                ‘Generating polcy.json file for Local to Local NSX Manager DFW backup/migration...’
-				$Uri = 'https://'+$nsxmgr+'/policy/api/v1/infra?type_filter=SecurityPolicy;Group;Service;PolicyContextProfile'
-				$infra = Get-NSXDFW($Uri)
-				New-NSXLocalInfra
+                ‘All rules with zero hits (sorted by creation date):’
+				
 				'Done!'
            } ‘2’ {
                 cls
-                ‘Generating global-policy.json file for Global (Federation) to Local NSX Manager DFW backup/migration...’
-				$Uri = 'https://'+$nsxmgr+'/global-manager/api/v1/global-infra?type_filter=SecurityPolicy;Group;Service;PolicyContextProfile'
-				$infra = Get-NSXDFW($Uri)
-				New-NSXGlobalInfra
+                ‘Rules with zero hits created before:’
+				
 				'Done!'
+           }  ‘3’ {
+                cls
+                'Rules with zero hits created after:’
+				
+				'Done!'
+           } ‘4’ {
+                cls
+                ‘Top 10 percent least hit rules (excluding zero hit rules):’
+				
+				'Done!'
+            } ‘5’ {
+                cls
+                ‘Top 10 percent most hit rules:’
+				
+				'Done!'
+           } ‘b’ {
+                return
+           }
+     }
+     pause
+}
+until ($input -eq ‘b’)
+
+}
+
+function Age-Menu-Options
+{
+     param (
+           [string]$Title = ‘NSX DFW Age/Date queries’
+     )
+     cls
+     Write-Host “================ $Title ================”
+     
+     Write-Host “1: List all rules sorted by creation date”
+     Write-Host “2: List all rules older than 'X' days”
+     Write-Host “3: List all rules newer than 'X' days”
+     Write-Host “Q: Enter ‘B’ to go back to Main Menu"
+}
+
+function Age-Menu {
+
+do
+{
+     Age-Menu-Options
+     $input = Read-Host “Please make a selection”
+     switch ($input)
+     {
+           ‘1' {
+                cls
+                ‘All rules sorted by creation date:’
+				
+				'Done!'
+           } ‘2’ {
+                cls
+                "Rules older than 'X' days"
+				
+				'Done!'
+            } ‘3’ {
+                cls
+                "List all rules newer than 'X' days"
+				
+				'Done!'
+           } ‘b’ {
+                return
+           }
+     }
+     pause
+}
+until ($input -eq ‘b’)
+}
+
+
+
+function Main-Menu
+{
+     param (
+           [string]$Title = ‘NSX DFW Audit Main Menu’
+     )
+     cls
+     Write-Host “================ $Title ================”
+     
+     Write-Host “1: Show queries regarding rule hits”
+     Write-Host “2: Show queries regarding rule age”
+     Write-Host “3: List all rules not using 'Applied To' ”
+     Write-Host “Q: Enter ‘Q’ to quit.”
+}
+
+# Main
+
+#First gathering up all elements from NSX API that will be utilized by functions
+
+$allsecpolicies, $allrules, $allnoappliedtopolicyrules = Get-NSXDFW $Uri
+$allstats = Get-NSXDFWStats $allsecpolicies
+$nohitrules = Get-NSXDFWNoHitRules $allstats $allrules
+
+
+do
+{
+     Main-Menu
+     $input = Read-Host “Please make a selection”
+     switch ($input)
+     {
+           ‘1’ {
+                cls
+                Hit-Menu
+				
+           } ‘2' {
+                cls
+                Age-Menu
+                
+            } ‘3’ {
+                cls
+                Write-Host "Rules that are not leveraging 'Applied To':"
+
            } ‘q’ {
+                cls
+                Write-Host "Good-bye"
                 return
            }
      }
@@ -181,12 +296,8 @@ do
 }
 until ($input -eq ‘q’)
 
-#>
 
-$allsecpolicies, $allrules, $allnoappliedtopolicyrules = Get-NSXDFW $Uri
-$allstats = Get-NSXDFWStats $allsecpolicies
-$nohitrules = Get-NSXDFWNoHitRules $allstats $allrules
-#$targetdate = Get-TargetDate
+
 
 
 

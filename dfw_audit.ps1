@@ -98,7 +98,21 @@ function Get-AllNoHitRules($nohitrules, $allrules){
 function Get-NoHitRulesOlderThan($nohitrules, $allrules, $targetdate){
 	$sortnohitrules = @()
 	foreach ($nohitrule in $nohitrules){
-		foreach ($rule in $allrules | Where-object {$_.rule_id -match ($nohitrule.internal_rule_id) -And $_._create_time -lt $targetdate}){
+		foreach ($rule in $allrules | Where-object {$_.rule_id -match ($nohitrule.internal_rule_id) -And $_._create_time -le $targetdate}){
+			$sortnohitrules += $rule
+		}	
+	}
+	$sortnohitrules = $sortnohitrules | Sort-Object -Property _create_time
+	foreach ($rule in $sortnohitrules){
+		[int]$rulecreatetime = $rule._create_time / 1000
+		Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)"has zero hits -- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
+	}
+}
+
+function Get-NoHitRulesNewerThan($nohitrules, $allrules, $targetdate){
+	$sortnohitrules = @()
+	foreach ($nohitrule in $nohitrules){
+		foreach ($rule in $allrules | Where-object {$_.rule_id -match ($nohitrule.internal_rule_id) -And $_._create_time -ge $targetdate}){
 			$sortnohitrules += $rule
 		}	
 	}
@@ -135,6 +149,42 @@ function Get-RulesNoAppliedTo($allnoappliedtopolicyrules){
 	}
 }
 
+function Get-AllRulesSorted($allrules){
+	$sortrules = $allrules | Sort-Object -Property _create_time
+	foreach ($rule in $sortrules){
+		[int]$rulecreatetime = $rule._create_time / 1000
+		Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)"-- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
+	}
+}
+
+function Get-AllRulesOlderThan($allrules, $targetdate){
+	$sortrules = @()
+	
+	foreach ($rule in $allrules | Where-object {$_.rule_id -And $_._create_time -le $targetdate}){
+		$sortrules += $rule
+	}	
+
+	$sortrules = $sortrules | Sort-Object -Property _create_time
+	foreach ($rule in $sortrules){
+		[int]$rulecreatetime = $rule._create_time / 1000
+		Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)"-- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
+	}
+}
+
+function Get-AllRulesNewerThan($allrules, $targetdate){
+	$sortrules = @()
+	
+	foreach ($rule in $allrules | Where-object {$_.rule_id -And $_._create_time -ge $targetdate}){
+		$sortrules += $rule
+	}	
+
+	$sortrules = $sortrules | Sort-Object -Property _create_time
+	foreach ($rule in $sortrules){
+		[int]$rulecreatetime = $rule._create_time / 1000
+		Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)"-- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
+	}
+}
+
 
 #  Menu Systems
 
@@ -165,27 +215,31 @@ do
            ‘1’ {
                 cls
                 ‘All rules with zero hits (sorted by creation date):’
-				
+				Get-AllNoHitRules $nohitrules $allrules
 				'Done!'
            } ‘2’ {
                 cls
+				$targetdate = Get-TargetDate
+				cls
                 ‘Rules with zero hits created before:’
-				
+				Get-NoHitRulesOlderThan $nohitrules $allrules $targetdate
 				'Done!'
            }  ‘3’ {
                 cls
+				$targetdate = Get-TargetDate
+				cls
                 'Rules with zero hits created after:’
-				
+				Get-NoHitRulesNewerThan $nohitrules $allrules $targetdate
 				'Done!'
            } ‘4’ {
                 cls
                 ‘Top 10 percent least hit rules (excluding zero hit rules):’
-				
+				Get-BottomTenHitRules $allpolstats $allrules
 				'Done!'
             } ‘5’ {
                 cls
                 ‘Top 10 percent most hit rules:’
-				
+				Get-TopTenHitRules $allpolstats $allrules
 				'Done!'
            } ‘b’ {
                 return
@@ -222,17 +276,21 @@ do
            ‘1' {
                 cls
                 ‘All rules sorted by creation date:’
-				
+				Get-AllRulesSorted $allrules
 				'Done!'
            } ‘2’ {
                 cls
+				$targetdate = Get-TargetDate
+				cls
                 "Rules older than 'X' days"
-				
+				Get-AllRulesOlderThan $allrules $targetdate
 				'Done!'
             } ‘3’ {
                 cls
+				$targetdate = Get-TargetDate
+				cls
                 "List all rules newer than 'X' days"
-				
+				Get-AllRulesNewerThan $allrules $targetdate
 				'Done!'
            } ‘b’ {
                 return

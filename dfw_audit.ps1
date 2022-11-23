@@ -262,7 +262,7 @@ function Age-Menu-Options
      Write-Host “1: List all rules sorted by creation date”
      Write-Host “2: List all rules older than 'X' days”
      Write-Host “3: List all rules newer than 'X' days”
-     Write-Host “Q: Enter ‘B’ to go back to Main Menu"
+     Write-Host “B: Enter ‘B’ to go back to Main Menu"
 }
 
 function Age-Menu {

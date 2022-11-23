@@ -215,30 +215,37 @@ do
            ‘1’ {
                 cls
                 ‘All rules with zero hits (sorted by creation date):’
+				''
 				Get-AllNoHitRules $nohitrules $allrules
 				'Done!'
            } ‘2’ {
                 cls
 				$targetdate = Get-TargetDate
+				$printdate = Get-Date -UnixTimeSeconds ($targetdate / 1000)
 				cls
-                ‘Rules with zero hits created before:’
+                ‘Rules with zero hits created on or before '+$printdate
+				''
 				Get-NoHitRulesOlderThan $nohitrules $allrules $targetdate
 				'Done!'
            }  ‘3’ {
                 cls
 				$targetdate = Get-TargetDate
+				$printdate = Get-Date -UnixTimeSeconds ($targetdate / 1000)
 				cls
-                'Rules with zero hits created after:’
+                'Rules with zero hits created on or after ’+$printdate
+				''
 				Get-NoHitRulesNewerThan $nohitrules $allrules $targetdate
 				'Done!'
            } ‘4’ {
                 cls
-                ‘Top 10 percent least hit rules (excluding zero hit rules):’
+                ‘Bottom 10 percent of rules by hit count (excluding zero hit rules):’
+				''
 				Get-BottomTenHitRules $allstats $allrules
 				'Done!'
             } ‘5’ {
                 cls
-                ‘Top 10 percent most hit rules:’
+                ‘Top 10 percent of rules by hit count:’
+				''
 				Get-TopTenHitRules $allstats $allrules
 				'Done!'
            } ‘b’ {
@@ -259,7 +266,7 @@ function Age-Menu-Options
      cls
      Write-Host “================ $Title ================”
      
-     Write-Host “1: List all rules sorted by creation date”
+     Write-Host “1: List all rules sorted by creation date (oldest to newest)”
      Write-Host “2: List all rules older than 'X' days”
      Write-Host “3: List all rules newer than 'X' days”
      Write-Host “B: Enter ‘B’ to go back to Main Menu"
@@ -276,20 +283,25 @@ do
            ‘1' {
                 cls
                 ‘All rules sorted by creation date:’
+				''
 				Get-AllRulesSorted $allrules
 				'Done!'
            } ‘2’ {
                 cls
 				$targetdate = Get-TargetDate
+				$printdate = Get-Date -UnixTimeSeconds ($targetdate / 1000)
 				cls
-                "Rules older than 'X' days"
+                "Rules created on or before "+$printdate
+				''
 				Get-AllRulesOlderThan $allrules $targetdate
 				'Done!'
             } ‘3’ {
                 cls
 				$targetdate = Get-TargetDate
+				$printdate = Get-Date -UnixTimeSeconds ($targetdate / 1000)
 				cls
-                "List all rules newer than 'X' days"
+                "Rules created on or after "+$printdate
+				''
 				Get-AllRulesNewerThan $allrules $targetdate
 				'Done!'
            } ‘b’ {
@@ -342,6 +354,8 @@ do
                 
             } ‘3’ {
                 cls
+				Write-Host "Note: Rules may have 'Applied To' configured at the Security Policy level"
+				Write-Host "and those rules are properly excluded from the below list"
                 Write-Host "Rules that are not leveraging 'Applied To':"
 				Get-RulesNoAppliedTo $allnoappliedtopolicyrules
 

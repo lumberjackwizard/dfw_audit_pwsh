@@ -343,6 +343,7 @@ do
             } ‘3’ {
                 cls
                 Write-Host "Rules that are not leveraging 'Applied To':"
+				Get-RulesNoAppliedTo $allnoappliedtopolicyrules
 
            } ‘q’ {
                 cls

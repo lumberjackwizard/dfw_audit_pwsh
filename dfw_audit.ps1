@@ -348,7 +348,7 @@ do
            } ‘q’ {
                 cls
                 Write-Host "Good-bye"
-                return
+                exit
            }
      }
      pause

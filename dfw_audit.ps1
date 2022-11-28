@@ -377,8 +377,8 @@ do
             } ‘3’ {
                 cls
 				Write-Host "Note: Rules that are members of a Secuity Policy where"
-				Write-Host "      'Applied To' is configured on the Security Policy itself"
-				Write-Host "      are excluded from the below results"
+				Write-Host "     'Applied To' is configured on the Security Policy"
+				Write-Host "      itself are excluded from the below results"
 				''
                 Write-Host "Rules that are not leveraging 'Applied To':"
 				''

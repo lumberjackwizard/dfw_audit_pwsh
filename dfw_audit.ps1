@@ -363,6 +363,7 @@ do
 				Write-Host "and those rules are properly excluded from the below list"
                 Write-Host "Rules that are not leveraging 'Applied To':"
 				Get-RulesNoAppliedTo $allnoappliedtopolicyrules
+				pause
 
            } ‘q’ {
                 cls

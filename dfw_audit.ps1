@@ -89,6 +89,7 @@ function Get-AllNoHitRules($nohitrules, $allrules){
 		}
 	}	
 	$sortnohitrules = $sortnohitrules | Sort-Object -Property _create_time 
+	if ($sortnohitrules.count -eq 0) {Write-Host "No Matches Found."}
 	foreach ($rule in $sortnohitrules){
 			[int]$rulecreatetime = $rule._create_time / 1000
 			Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)"has zero hits -- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
@@ -103,6 +104,7 @@ function Get-NoHitRulesOlderThan($nohitrules, $allrules, $targetdate){
 		}	
 	}
 	$sortnohitrules = $sortnohitrules | Sort-Object -Property _create_time
+	if ($sortnohitrules.count -eq 0) {Write-Host "No Matches Found."}
 	foreach ($rule in $sortnohitrules){
 		[int]$rulecreatetime = $rule._create_time / 1000
 		Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)"has zero hits -- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
@@ -117,6 +119,7 @@ function Get-NoHitRulesNewerThan($nohitrules, $allrules, $targetdate){
 		}	
 	}
 	$sortnohitrules = $sortnohitrules | Sort-Object -Property _create_time
+	if ($sortnohitrules.count -eq 0) {Write-Host "No Matches Found."}
 	foreach ($rule in $sortnohitrules){
 		[int]$rulecreatetime = $rule._create_time / 1000
 		Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)"has zero hits -- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
@@ -144,6 +147,7 @@ function Get-BottomTenHitRules($allpolstats, $allrules){
 }
 
 function Get-RulesNoAppliedTo($allnoappliedtopolicyrules){
+	if ($allnoappliedtopolicyrules.count -eq 0) {Write-Host "No Matches Found."}
 	foreach ($rule in $allnoappliedtopolicyrules | Where-Object {$_.id -And $_.scope -eq "ANY"}){
 		Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)
 	}
@@ -165,6 +169,7 @@ function Get-AllRulesOlderThan($allrules, $targetdate){
 	}	
 
 	$sortrules = $sortrules | Sort-Object -Property _create_time
+	if ($sortrules.count -eq 0) {Write-Host "No Matches Found."}
 	foreach ($rule in $sortrules){
 		[int]$rulecreatetime = $rule._create_time / 1000
 		Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)"-- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)
@@ -179,6 +184,7 @@ function Get-AllRulesNewerThan($allrules, $targetdate){
 	}	
 
 	$sortrules = $sortrules | Sort-Object -Property _create_time
+	if ($sortrules.count -eq 0) {Write-Host "No Matches Found."}
 	foreach ($rule in $sortrules){
 		[int]$rulecreatetime = $rule._create_time / 1000
 		Write-Host "Rule ID"($rule.rule_id)"-"($rule.display_name)"-- Created on"(Get-Date -UnixTimeSeconds $rulecreatetime)

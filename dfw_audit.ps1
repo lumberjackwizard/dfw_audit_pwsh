@@ -217,6 +217,7 @@ do
                 ‘All rules with zero hits (sorted by creation date):’
 				''
 				Get-AllNoHitRules $nohitrules $allrules
+				pause
 				'Done!'
            } ‘2’ {
                 cls
@@ -226,6 +227,7 @@ do
                 ‘Rules with zero hits created on or before '+$printdate
 				''
 				Get-NoHitRulesOlderThan $nohitrules $allrules $targetdate
+				pause
 				'Done!'
            }  ‘3’ {
                 cls
@@ -235,18 +237,21 @@ do
                 'Rules with zero hits created on or after ’+$printdate
 				''
 				Get-NoHitRulesNewerThan $nohitrules $allrules $targetdate
+				pause
 				'Done!'
            } ‘4’ {
                 cls
                 ‘Bottom 10 percent of rules by hit count (excluding zero hit rules):’
 				''
 				Get-BottomTenHitRules $allstats $allrules
+				pause
 				'Done!'
             } ‘5’ {
                 cls
                 ‘Top 10 percent of rules by hit count:’
 				''
 				Get-TopTenHitRules $allstats $allrules
+				pause
 				'Done!'
            } ‘b’ {
                 return

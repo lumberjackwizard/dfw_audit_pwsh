@@ -217,8 +217,9 @@ do
                 ‘All rules with zero hits (sorted by creation date):’
 				''
 				Get-AllNoHitRules $nohitrules $allrules
-				
+				''
 				'Done!'
+				''
            } ‘2’ {
                 cls
 				$targetdate = Get-TargetDate
@@ -227,8 +228,9 @@ do
                 ‘Rules with zero hits created on or before '+$printdate
 				''
 				Get-NoHitRulesOlderThan $nohitrules $allrules $targetdate
-				
+				''
 				'Done!'
+				''
            }  ‘3’ {
                 cls
 				$targetdate = Get-TargetDate
@@ -237,22 +239,25 @@ do
                 'Rules with zero hits created on or after ’+$printdate
 				''
 				Get-NoHitRulesNewerThan $nohitrules $allrules $targetdate
-				
+				''
 				'Done!'
+				''
            } ‘4’ {
                 cls
                 ‘Bottom 10 percent of rules by hit count (excluding zero hit rules):’
 				''
 				Get-BottomTenHitRules $allstats $allrules
-				
+				''
 				'Done!'
+				''
             } ‘5’ {
                 cls
                 ‘Top 10 percent of rules by hit count:’
 				''
 				Get-TopTenHitRules $allstats $allrules
-				
+				''
 				'Done!'
+				''
            } ‘b’ {
                 return
            }
@@ -290,7 +295,9 @@ do
                 ‘All rules sorted by creation date:’
 				''
 				Get-AllRulesSorted $allrules
+				''
 				'Done!'
+				''
            } ‘2’ {
                 cls
 				$targetdate = Get-TargetDate
@@ -299,7 +306,9 @@ do
                 "Rules created on or before "+$printdate
 				''
 				Get-AllRulesOlderThan $allrules $targetdate
+				''
 				'Done!'
+				''
             } ‘3’ {
                 cls
 				$targetdate = Get-TargetDate
@@ -308,7 +317,9 @@ do
                 "Rules created on or after "+$printdate
 				''
 				Get-AllRulesNewerThan $allrules $targetdate
+				''
 				'Done!'
+				''
            } ‘b’ {
                 return
            }
@@ -363,6 +374,9 @@ do
 				Write-Host "and those rules are properly excluded from the below list"
                 Write-Host "Rules that are not leveraging 'Applied To':"
 				Get-RulesNoAppliedTo $allnoappliedtopolicyrules
+				''
+				'Done!'
+				''
 				pause
 
            } ‘q’ {

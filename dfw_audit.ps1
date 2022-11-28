@@ -376,9 +376,12 @@ do
                 
             } ‘3’ {
                 cls
-				Write-Host "Note: Rules may have 'Applied To' configured at the Security Policy level"
-				Write-Host "and those rules are properly excluded from the below list"
+				Write-Host "Note: Rules that are members of a Secuity Policy "
+				Write-Host "where 'Applied To' is configred on the Security Policy"
+				Write-Host "are excluded from the below results"
+				''
                 Write-Host "Rules that are not leveraging 'Applied To':"
+				''
 				Get-RulesNoAppliedTo $allnoappliedtopolicyrules
 				''
 				'Done!'

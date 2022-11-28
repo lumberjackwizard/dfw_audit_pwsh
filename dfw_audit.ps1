@@ -8,6 +8,7 @@ $Uri = 'https://'+$nsxmgr+'/policy/api/v1/infra?type_filter=SecurityPolicy'
 
 $nsxmgr = Read-Host "Enter NSX Manager IP or FQDN"
 $Cred = Get-Credential -Title 'NSX Manager Credentials' -Message 'Enter NSX Username and Password'
+pause
 
 
 # All fuctions beginning with 'Get-NSXDFW' will run at script initiation. All other functions will be

@@ -370,7 +370,7 @@ do
                 exit
            }
      }
-     pause
+     
 }
 until ($input -eq ‘q’)
 
